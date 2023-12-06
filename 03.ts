@@ -6,10 +6,7 @@ if (lines.length > 0 && lines[lines.length - 1] === '') {
     lines.pop();
 }
 
-function is_symbol(i: number, j: number): boolean {
-    return ((lines[i]??'').charAt(j) || '.') !== '.';
-}
-
+let gears = new Map<string, number[]>();
 let part1 = 0;
 let i = 0;
 for (const line of lines) {
@@ -17,17 +14,35 @@ for (const line of lines) {
         assert(m.index !== undefined);
         const j1 = m.index;
         const j2 = m.index + m[0].length;
-
+        let part_number = parseInt(m[0]);
         let good = false;
-        good = good || is_symbol(i, j1 - 1) || is_symbol(i, j2);
-        for (let j = j1 - 1; j <= j2; j++) {
-            good = good || is_symbol(i - 1, j) || is_symbol(i + 1, j);
+        for (let ii = i - 1; ii <= i + 1; ii++) {
+            for (let jj = j1 - 1; jj <= j2; jj++) {
+                if (ii == i && jj >= j1 && jj < j2) {
+                    continue;
+                }
+                let s = ((lines[ii] ?? "").charAt(jj) || ".");
+                good = good || s !== ".";
+                if (s == "*") {
+                    let key = `${ii},${jj}`;
+                    let parts = gears.get(key) ?? [];
+                    parts.push(part_number);
+                    gears.set(key, parts);
+                }
+            }
         }
         if (good) {
-            part1 += parseInt(m[0]);
+            part1 += part_number;
         }
     }
     i += 1;
 }
-
 console.log("Part 1:", part1);
+
+let part2 = 0;
+for (const [_, parts] of gears.entries()) {
+    if (parts.length === 2) {
+        part2 += parts[0] * parts[1];
+    }
+}
+console.log("Part 2:", part2);
