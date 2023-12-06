@@ -1,5 +1,5 @@
 { "lint": {
     "rules": {
-        "exclude": ["prefer-const", "no-unused-vars"]
+        "exclude": ["prefer-const", "no-unused-vars", "no-explicit-any"]
     }
 }}
