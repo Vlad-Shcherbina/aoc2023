@@ -22,3 +22,14 @@ for (let i = 0; i < times.length; i++) {
     part1 *= cnt;
 }
 console.log("Part 1:", part1);
+
+let time = parseInt(lines[0].slice(5).replaceAll(/\s+/g, ""));
+let distance = parseInt(lines[1].slice(9).replaceAll(/\s+/g, ""));
+let part2 = 0;
+for (let v = 1; v < time; v++) {
+    let d = v * (time - v);
+    if (d > distance) {
+        part2++;
+    }
+}
+console.log("Part 2:", part2);
