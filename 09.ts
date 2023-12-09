@@ -23,9 +23,14 @@ function predict(xs: number[]) {
     return diffss[0][diffss[0].length - 1];
 }
 
-let part1 = 0;
-for (let line of lines) {
-    let xs = line.split(/\s+/).map(x => parseInt(x));
-    part1 += predict(xs);
+for (let part of [1, 2]) {
+    let s = 0;
+    for (let line of lines) {
+        let xs = line.split(/\s+/).map(x => parseInt(x));
+        if (part === 2) {
+            xs.reverse();
+        }
+        s += predict(xs);
+    }
+    console.log(`Part ${part}`, s);
 }
-console.log("Part 1:", part1);
