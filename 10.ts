@@ -20,10 +20,12 @@ lines[start_i] = lines[start_i].replace("S", "|");
 let di = 1;
 let dj = 0;
 
+let on_path = new Set<string>();
+on_path.add(`${start_i},${start_j}`);
 let i = start_i + di;
 let j = start_j + dj;
-let len = 1;
 while (i != start_i || j != start_j) {
+    on_path.add(`${i},${j}`);
     let dss;
     let c = lines[i][j];
     if (c == '|') {
@@ -52,7 +54,21 @@ while (i != start_i || j != start_j) {
     dj = dss[1 - idx].dj;
     i += di;
     j += dj;
-    len += 1;
 }
+console.log("Part 1:", on_path.size / 2);
 
-console.log("Part 1:", len / 2);
+let part2 = 0;
+lines.forEach((line, i) => {
+    let cnt = 0;
+    for (let j = 0; j < line.length; j++) {
+        if (on_path.has(`${i},${j}`)) {
+            let c = line[j];
+            if ("|LJ".includes(c)) {
+                cnt = 1 - cnt;
+            }
+        } else {
+            part2 += cnt;
+        }
+    }
+});
+console.log("Part 2:", part2);
