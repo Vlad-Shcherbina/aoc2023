@@ -19,17 +19,21 @@ lines.forEach((line, i) => {
     row_factor.push(rf);
 });
 
-let part1 = 0;
-galaxies.forEach(([i1, j1], idx) => {
-    galaxies.slice(idx + 1).forEach(([i2, j2]) => {
-        let [ii1, ii2] = [Math.min(i1, i2), Math.max(i1, i2)]
-        let [jj1, jj2] = [Math.min(j1, j2), Math.max(j1, j2)]
-        for (let i = ii1; i < ii2; i++) {
-            part1 += row_factor[i];
-        }
-        for (let j = jj1; j < jj2; j++) {
-            part1 += col_factor[j];
-        }
+for (let part of [1, 2]) {
+    let sum = 0;
+    galaxies.forEach(([i1, j1], idx) => {
+        galaxies.slice(idx + 1).forEach(([i2, j2]) => {
+            let [ii1, ii2] = [Math.min(i1, i2), Math.max(i1, i2)]
+            let [jj1, jj2] = [Math.min(j1, j2), Math.max(j1, j2)]
+            for (let i = ii1; i < ii2; i++) {
+                sum += row_factor[i];
+            }
+            for (let j = jj1; j < jj2; j++) {
+                sum += col_factor[j];
+            }
+        });
     });
-});
-console.log("Part 1:", part1);
+    console.log(`Part ${part}:`, sum);
+    row_factor = row_factor.map(x => x == 2 ? 1000000 : x);
+    col_factor = col_factor.map(x => x == 2 ? 1000000 : x);
+}
