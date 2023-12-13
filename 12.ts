@@ -1,26 +1,11 @@
 import { assert } from "https://deno.land/std@0.208.0/assert/assert.ts";
 
-function all_variants(mask: string): string[] {
-    if (mask === "") {
-        return [""];
-    }
-    let first = mask[0];
-    let rest = mask.slice(1);
-    let res = all_variants(rest);
-    if (first === "?") {
-        return res.map(x => "." + x).concat(res.map(x => "#" + x));
-    } else {
-        return res.map(x => first + x);
-    }
-}
-
 function count(mask: string, groups: number[]) {
     let mem = new Map<string, number>();
     function rec(mask: string, groups: number[], i: number, group_idx: number, group_pos: number) {
         let key = `${i},${group_idx},${group_pos}`;
-        let cached_res = mem.get(key);
-        if (cached_res !== undefined) {
-            return cached_res;
+        if (mem.has(key)) {
+            return mem.get(key)!;
         }
 
         if (i == mask.length) {
