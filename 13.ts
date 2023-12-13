@@ -32,20 +32,33 @@ function find_hor_mirror(pattern: string[], num_smudges: number) {
         let cnt = 0;
         for (let j = 0; j < pattern.length; j++) {
             let j2 = 2 * i - 1 - j;
-            if (j2 < 0 || j2 >= pattern.length) continue;
+            if (j2 < 0 || j2 > j) continue;
             cnt += num_distinct(pattern[j], pattern[j2]);
-            if (cnt > 2 * num_smudges) {
+            if (cnt > num_smudges) {
                 break;
             }
         }
         console.log(i, cnt);
-        if (cnt === 2 * num_smudges) {
+        if (cnt === num_smudges) {
             return i;
         }
     }
     return null;
 }
 
+function mirror_score(pattern: string[], num_smudges: number) {
+    let hor_mirror = find_hor_mirror(pattern, num_smudges);
+    let ver_mirror = find_hor_mirror(transpose(pattern), num_smudges);
+    if (hor_mirror !== null) {
+        assert(ver_mirror === null);
+        return 100 * hor_mirror;
+    } else {
+        assert(ver_mirror !== null);
+        return ver_mirror;
+    }
+}
+
+let part1 = 0;
 let part2 = 0;
 let i = 0;
 while (i < lines.length) {
@@ -54,15 +67,10 @@ while (i < lines.length) {
         pattern.push(lines[i]);
         i++;
     }
-    let hor_mirror = find_hor_mirror(pattern, 1);
-    if (hor_mirror !== null) {
-        part2 += 100 * hor_mirror;
-    }
-    let ver_mirror = find_hor_mirror(transpose(pattern), 1);
-    if (ver_mirror !== null) {
-        part2 += ver_mirror;
-    }
     i++;
+    part1 += mirror_score(pattern, 0);
+    part2 += mirror_score(pattern, 1);
 }
 
+console.log("Part 1:", part1);
 console.log("Part 2:", part2);
