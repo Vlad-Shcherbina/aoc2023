@@ -15,35 +15,38 @@ function transpose(pattern: string[]) {
     return res;
 }
 
-function find_hor_mirror(pattern: string[]) {
-    let line_to_id = new Map<string, number>();
-    let ids = pattern.map(line => {
-        if (line_to_id.has(line)) {
-            return line_to_id.get(line);
-        } else {
-            let id = line_to_id.size;
-            line_to_id.set(line, id);
-            return id;
+function num_distinct(s1: string, s2: string) {
+    let res = 0;
+    assert(s1.length === s2.length);
+    for (let i = 0; i < s1.length; i++) {
+        if (s1[i] !== s2[i]) {
+            res += 1;
         }
-    });
-    for (let i = 1; i < ids.length; i++) {
-        let good = true;
-        for (let j = 0; j < ids.length; j++) {
+    }
+    return res;
+}
+
+function find_hor_mirror(pattern: string[], num_smudges: number) {
+    console.log();
+    for (let i = 1; i < pattern.length; i++) {
+        let cnt = 0;
+        for (let j = 0; j < pattern.length; j++) {
             let j2 = 2 * i - 1 - j;
-            if (j2 < 0 || j2 >= ids.length) continue;
-            if (ids[j] !== ids[j2]) {
-                good = false;
+            if (j2 < 0 || j2 >= pattern.length) continue;
+            cnt += num_distinct(pattern[j], pattern[j2]);
+            if (cnt > 2 * num_smudges) {
                 break;
             }
         }
-        if (good) {
+        console.log(i, cnt);
+        if (cnt === 2 * num_smudges) {
             return i;
         }
     }
     return null;
 }
 
-let part1 = 0;
+let part2 = 0;
 let i = 0;
 while (i < lines.length) {
     let pattern = [];
@@ -51,15 +54,15 @@ while (i < lines.length) {
         pattern.push(lines[i]);
         i++;
     }
-    let hor_mirror = find_hor_mirror(pattern);
+    let hor_mirror = find_hor_mirror(pattern, 1);
     if (hor_mirror !== null) {
-        part1 += 100 * hor_mirror;
+        part2 += 100 * hor_mirror;
     }
-    let ver_mirror = find_hor_mirror(transpose(pattern));
-    if (ver_mirror !== null){
-        part1 += ver_mirror;
+    let ver_mirror = find_hor_mirror(transpose(pattern), 1);
+    if (ver_mirror !== null) {
+        part2 += ver_mirror;
     }
     i++;
 }
 
-console.log("Part 1:", part1);
+console.log("Part 2:", part2);
