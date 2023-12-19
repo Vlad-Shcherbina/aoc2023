@@ -87,3 +87,69 @@ for (let part of parts) {
     }
 }
 console.log("Part 1:", part1);
+
+type Box = Record<string, [number, number]>;
+
+function split(box: Box, cond: Cond | null): [Box | null, Box | null] {
+    if (cond === null) {
+        return [box, null];
+    }
+    if (cond.op === "<") {
+        let [min, max] = box[cond.attr_name];
+        if (min >= cond.threshold) {
+            return [null, box];
+        } else if (max <= cond.threshold) {
+            return [box, null];
+        } else {
+            return [
+                { ...box, [cond.attr_name]: [min, cond.threshold] },
+                { ...box, [cond.attr_name]: [cond.threshold, max] }];
+        }
+    }
+    if (cond.op === ">") {
+        let [min, max] = box[cond.attr_name];
+        if (min >= cond.threshold + 1) {
+            return [box, null];
+        } else if (max <= cond.threshold + 1) {
+            return [null, box];
+        } else {
+            return [
+                { ...box, [cond.attr_name]: [cond.threshold + 1, max] },
+                { ...box, [cond.attr_name]: [min, cond.threshold + 1] }];
+        }
+    }
+    assert(false);
+}
+
+let box: Box = {};
+for (let a of "xmas") {
+    box[a] = [1, 4001];
+}
+let part2 = 0;
+let queue: [Box, string][] = [[box, "in"]];
+while (queue.length > 0) {
+    let [box, name] = queue.pop()!;
+    if (name === "A") {
+        let volume = 1;
+        for (let k in box) {
+            let [min, max] = box[k];
+            volume *= max - min;
+        }
+        part2 += volume;
+        continue;
+    }
+    if (name === "R") {
+        continue;
+    }
+    for (let rule of name_to_rules.get(name)!) {
+        let [box1, box2] = split(box, rule.cond);
+        if (box1 !== null) {
+            queue.push([box1, rule.dst]);
+        }
+        if (box2 === null) {
+            break;
+        }
+        box = box2;
+    }
+}
+console.log("Part 2:", part2);
