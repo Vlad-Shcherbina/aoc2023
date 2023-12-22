@@ -21,9 +21,8 @@ for (let line of lines) {
     let [x2, y2, z2] = p2.split(",").map(Number);
     bricks.push({x1, y1, z1, x2, y2, z2});
 }
-console.log(bricks.length);
 
-let supports: number[][] = bricks.map(_ => []);
+let supports: Set<number>[] = bricks.map(_ => new Set());
 let supported_by: Set<number>[] = bricks.map(_ => new Set());
 
 let hmap = new Map<string, [number, number]>();
@@ -46,7 +45,7 @@ bricks.forEach(({x1, y1, z1, x2, y2, z2}, i) => {
             let key = `${x},${y}`;
             let [z, j] = hmap.get(key) ?? [0, -1];
             if (z == max_z && j != -1) {
-                supports[j].push(i);
+                supports[j].add(i);
                 supported_by[i].add(j);
             }
             hmap.set(key, [max_z + z2 - z1 + 1, i]);
@@ -56,8 +55,28 @@ bricks.forEach(({x1, y1, z1, x2, y2, z2}, i) => {
 
 let part1 = 0;
 supports.forEach(js => {
-    if (js.every(j => supported_by[j].size > 1)) {
+    if ([...js].every(j => supported_by[j].size > 1)) {
         part1 += 1;
     }
 });
 console.log("Part 1:", part1);
+
+let part2 = 0;
+for (let i = 0; i < bricks.length; i++) {
+    let disintegrated = Array(bricks.length).fill(false);
+    disintegrated[i] = true;
+    let queue = [i];
+    while (queue.length > 0) {
+        let i = queue.pop()!;
+        for (let j of supports[i]) {
+            if ([...supported_by[j]].every(j => disintegrated[j])) {
+                if (!disintegrated[j]) {
+                    disintegrated[j] = true;
+                    queue.push(j);
+                    part2 += 1;
+                }
+            }
+        }
+    }
+}
+console.log("Part 2:", part2);
