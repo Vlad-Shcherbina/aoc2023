@@ -38,3 +38,31 @@ for (let step = 0; step < 64; step++) {
 }
 
 console.log("Part 1:", zone.size);
+
+let ns: number[] = [];
+zone = new Map<string, [number, number]>();
+zone.set(`${start[0]},${start[1]}`, start);
+for (let step = 0; step < 2000; step++) {
+    ns.push(zone.size);
+    let new_zone = new Map<string, [number, number]>();
+    for (let [_, [i, j]] of zone) {
+        for (let [di, dj] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+            let i2 = i + di;
+            let j2 = j + dj;
+            if (lines[(i2 + 10000 * h) % h][(j2 + 10000 * w) % w] === "#") {
+                continue;
+            }
+            let key = `${i2},${j2}`;
+            new_zone.set(key, [i2, j2]);
+        }
+    }
+    zone = new_zone;
+}
+console.log(ns[0]);
+let ds = ns.slice(1).map((n, i) => n - ns[i]);
+console.log(ds[0]);
+let ds2 = ds.slice(1).map((n, i) => n - ds[i]);
+// console.log(ds2);
+for (let i = 0; i < ds2.length; i += 10) {
+    console.log(ds2.slice(i, i + 10).join(", "));
+}
